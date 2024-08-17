@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        PUSH_IMAGE = 'true' // Set this to 'true' or 'false' to control image pushing
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -19,10 +22,7 @@ pipeline {
             }
             steps {
                 script {
-                    // Ensure the build directory exists
                     sh 'mkdir -p build'
-                    
-                    // Use Maven to compile the project
                     sh 'mvn compile'
                 }
             }
@@ -37,7 +37,6 @@ pipeline {
             }
             steps {
                 script {
-                    // Use Maven to run tests
                     sh 'mvn test'
                 }
             }
@@ -46,39 +45,41 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
+                    // Ensure the build directory exists
+                    sh 'mkdir -p build'
+                    
+                    // Copy the files to the build directory
+                    sh 'cp -r pom.xml src target build/'
+                    
                     // Print the current working directory and list its contents
                     sh '''
-                        # Ensure the build directory exists
-                        mkdir -p build
-                        
-                        # Copy the files to the build directory
-                        cp -r pom.xml src target build/
-                        
-                        # Print the current working directory before building the Docker image
                         echo "Current working directory:"
                         pwd
                         
                         echo "Contents of the current directory:"
                         ls -la
                         
-                        # Change to the build directory and list its contents
                         cd build
-
+                        
                         echo "Contents of the build directory:"
                         ls
-                        
-                        # Build the Docker image using the specified Dockerfile
-                        docker build -f Dockerfile-java -t maviance-devops-app:latest .
-
-                        # Optionally, check container images
-                        docker images
                     '''
-
-                    // Log in to Docker Hub
-                    withDockerRegistry([credentialsId: 'dockerhub-credentials', url: 'https://index.docker.io/v1/']) {
-                    // Tag and push the Docker image to Docker Hub
+                    
+                    // Build Docker image
+                    sh 'docker build -f Dockerfile-java -t maviance-devops-app:latest .'
+                    
+                    // Tag the Docker image
                     sh 'docker tag maviance-devops-app:latest mbaapoh/maviance-devops-app:latest'
-                    sh 'docker push mbaapoh/maviance-devops-app:latest'
+                    
+                    // Optionally, check Docker images
+                    sh 'docker images'
+
+                    // Push Docker image to Docker Hub if PUSH_IMAGE is true
+                    if (env.PUSH_IMAGE == 'true') {
+                        withDockerRegistry([credentialsId: 'dockerhub-credentials', url: 'https://index.docker.io/v1/']) {
+                            sh 'docker push mbaapoh/maviance-devops-app:latest'
+                        }
+                    }
                 }
             }
         }
@@ -86,8 +87,7 @@ pipeline {
         stage('Run Maven Compile') {
             steps {
                 script {
-                    // Run the Docker container, which automatically runs `mvn compile` because of the CMD instruction
-                    echo 'Testing container if it works'
+                    // Run the Docker container to ensure it works correctly
                     sh 'docker run --rm maviance-devops-app:latest'
                 }
             }

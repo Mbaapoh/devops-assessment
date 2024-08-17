@@ -66,6 +66,9 @@ pipeline {
                     '''
                     
                     // Build Docker image
+                    sh 'echo "Current working directory before build"'
+                    sh 'pwd'
+                    ls
                     sh 'docker build -f Dockerfile-java -t maviance-devops-app:latest .'
                     
                     // Tag the Docker image

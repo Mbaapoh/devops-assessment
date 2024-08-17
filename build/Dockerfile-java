@@ -1,11 +1,12 @@
-# Use the Maven image with Eclipse Temurin JDK 11
+# Use the Maven official image as the base image
 FROM maven:3.9.8-eclipse-temurin-11-alpine
 
-# Set the working directory inside the container
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy the Maven project files into the container
-COPY . .
+# Copy the pom.xml and src directory to the container
+COPY pom.xml /app/pom.xml
+COPY src /app/src
 
-# Run the Maven compile command
-RUN mvn compile
+# Set the default command to run Maven compile
+CMD ["mvn", "compile"]

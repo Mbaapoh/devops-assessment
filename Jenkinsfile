@@ -64,8 +64,13 @@ pipeline {
                         
                         # Change to the build directory and list its contents
                         cd build
+
+                        # Build the Docker image
+                        docker build -t maviance-devops-app:latest .
+
                         echo "Contents of the build directory:"
                         ls
+                        docker ps
                     
                     '''
                 }

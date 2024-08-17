@@ -51,9 +51,13 @@ pipeline {
 
                      // Print the current working directory before building the Docker image
                     sh '''
+                        // Copy the files to the build directory
+                        cp -r pom.xml src target build/
                         echo "Print the current working directory before building the Docker image"
                         pwd
                         ls -la
+                        cd build
+                        ls
                     
                     '''
                 }

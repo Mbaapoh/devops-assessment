@@ -78,7 +78,7 @@ pipeline {
                     // Push Docker image to Docker Hub if PUSH_IMAGE is true
                     if (env.PUSH_IMAGE == 'true') {
                         withDockerRegistry([credentialsId: 'dockerhub-credentials', url: 'https://index.docker.io/v1/']) {
-                            sh 'docker push mbaapoh/maviance-devops-app:latest'
+                            sh 'docker push mbaapoh/maviance-devops-app:1.0.0'
                         }
                     }
                 }

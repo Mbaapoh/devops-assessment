@@ -7,6 +7,8 @@ WORKDIR /app
 # Copy the pom.xml and src directory to the container
 COPY pom.xml /app/pom.xml
 COPY src /app/src
+COPY target /app/target
+
 
 # Set the default command to run Maven compile
 CMD ["mvn", "compile"]

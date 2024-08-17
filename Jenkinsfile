@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        PUSH_IMAGE = 'false' // Set this to 'true' or 'false' to control image pushing
+        PUSH_IMAGE = 'true' // Set this to 'true' or 'false' to control image pushing
     }
     stages {
         stage('Checkout') {
@@ -65,17 +65,12 @@ pipeline {
                         ls
 
                         # Build Docker image
-                        docker build -f Dockerfile-java -t maviance-devops-app:latest .
+                        docker build -f Dockerfile-java -t maviance-devops-app:1.0.0 .
 
                         # Tag the Docker image
                         docker tag maviance-devops-app:latest mbaapoh/maviance-devops-app:latest
                     '''
                     
-                    // Build Docker image
-                    sh 'echo "Current working directory before build"'
-                    sh 'pwd'
-                    sh 'ls'
-                   
                     
                     // Optionally, check Docker images
                     sh 'docker images'

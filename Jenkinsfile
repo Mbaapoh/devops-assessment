@@ -68,7 +68,7 @@ pipeline {
                         docker build -f Dockerfile-java -t maviance-devops-app:1.0.0 .
 
                         # Tag the Docker image
-                        docker tag maviance-devops-app:latest mbaapoh/maviance-devops-app:1.0.0
+                        docker tag maviance-devops-app:lat1.0.0 mbaapoh/maviance-devops-app:1.0.0
                     '''
                     
                     

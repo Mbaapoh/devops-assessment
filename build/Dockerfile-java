@@ -9,6 +9,7 @@ COPY pom.xml /app/pom.xml
 COPY src /app/src
 COPY target /app/target
 
+# Build the project during the image build
+RUN mvn compile
 
-# Set the default command to run Maven compile
-CMD ["mvn", "compile"]
+CMD ["mvn", "exec:java"]

@@ -1,15 +1,16 @@
 pipeline {
     agent any
     stages {
-        stage('Checkout') {
+       stage('Checkout') {
             steps {
-                // Clone the repository
+                deleteDir() // Deletes the workspace before checking out the code
                 checkout([$class: 'GitSCM',
-                          branches: [[name: '*/master']], // Specify the master branch
-                          userRemoteConfigs: [[url: 'https://github.com/maviance/devops-assessment.git']]
-                ])
+                        branches: [[name: '*/master']], // Specify the master branch
+                        userRemoteConfigs: [[url: 'https://github.com/maviance/devops-assessment.git']],
+                        extensions: [[$class: 'CleanBeforeCheckout'], [$class: 'PruneStaleBranch'], [$class: 'CloneOption', noTags: false, shallow: false]]])
             }
         }
+
         stage('Build') {
             
              agent {

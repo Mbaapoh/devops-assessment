@@ -1,19 +1,17 @@
 pipeline {
     agent any
     stages {
-       stage('Checkout') {
+        stage('Checkout') {
             steps {
-                deleteDir() // Deletes the workspace before checking out the code
                 checkout([$class: 'GitSCM',
-                        branches: [[name: '*/master']], // Specify the master branch
-                        userRemoteConfigs: [[url: 'https://github.com/Mbaapoh/devops-assessment.git']],
-                        extensions: [[$class: 'CleanBeforeCheckout'], [$class: 'PruneStaleBranch'], [$class: 'CloneOption', noTags: false, shallow: false]]])
+                    branches: [[name: '*/master']], // Specify the master branch
+                    userRemoteConfigs: [[url: 'https://github.com/Mbaapoh/devops-assessment.git']],
+                    extensions: [[$class: 'CleanBeforeCheckout'], [$class: 'PruneStaleBranch'], [$class: 'CloneOption', noTags: false, shallow: false]]])
             }
         }
 
         stage('Build') {
-            
-             agent {
+            agent {
                 docker {
                     image 'maven:3.9.8-eclipse-temurin-11-alpine'
                     reuseNode true // Reuse the same Docker container for subsequent stages
@@ -21,6 +19,9 @@ pipeline {
             }
             steps {
                 script {
+                    // Ensure the build directory exists
+                    sh 'mkdir -p build'
+                    
                     // Use Maven to compile the project
                     sh 'mvn compile'
                 }
@@ -28,8 +29,7 @@ pipeline {
         }
 
         stage('Test') {
-            
-             agent {
+            agent {
                 docker {
                     image 'maven:3.9.8-eclipse-temurin-11-alpine'
                     reuseNode true // Reuse the same Docker container for subsequent stages
@@ -37,21 +37,20 @@ pipeline {
             }
             steps {
                 script {
-                    // Use Maven to compile the project
+                    // Use Maven to run tests
                     sh 'mvn test'
                 }
             }
         }
 
-
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build Docker image
-                    // sh 'docker build -t my-app:latest .'
-
-                     // Print the current working directory before building the Docker image
+                    // Print the current working directory and list its contents
                     sh '''
+                        # Ensure the build directory exists
+                        mkdir -p build
+                        
                         # Copy the files to the build directory
                         cp -r pom.xml src target build/
                         
@@ -65,17 +64,27 @@ pipeline {
                         # Change to the build directory and list its contents
                         cd build
 
-                        # Build the Docker image
-                        docker build -t maviance-devops-app:latest .
-
                         echo "Contents of the build directory:"
                         ls
+                        
+                        # Build the Docker image using the specified Dockerfile
+                        docker build -f Dockerfile-java -t maviance-devops-app:latest .
+
+                        # Optionally, check running Docker containers
                         docker ps
-                    
                     '''
                 }
             }
         }
 
+        stage('Run Maven Compile') {
+            steps {
+                script {
+                    // Run the Docker container, which automatically runs `mvn compile` because of the CMD instruction
+                    echo 'Testing container if it works'
+                    sh 'docker run --rm maviance-devops-app:latest'
+                }
+            }
+        }
     }
 }

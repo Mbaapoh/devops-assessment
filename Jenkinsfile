@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        PUSH_IMAGE = 'true' // Set this to 'true' or 'false' to control image pushing
+        PUSH_IMAGE = 'false' // Set this to 'true' or 'false' to control image pushing
     }
     stages {
         stage('Checkout') {

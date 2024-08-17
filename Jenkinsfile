@@ -53,6 +53,7 @@ pipeline {
                     sh '''
                         echo "Print the current working directory before building the Docker image"
                         pwd
+                        ls -la
                     
                     '''
                 }

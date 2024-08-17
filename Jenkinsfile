@@ -63,16 +63,19 @@ pipeline {
                         
                         echo "Contents of the build directory:"
                         ls
+
+                        # Build Docker image
+                        docker build -f Dockerfile-java -t maviance-devops-app:latest .
+
+                        # Tag the Docker image
+                        docker tag maviance-devops-app:latest mbaapoh/maviance-devops-app:latest
                     '''
                     
                     // Build Docker image
                     sh 'echo "Current working directory before build"'
                     sh 'pwd'
-                    ls
-                    sh 'docker build -f Dockerfile-java -t maviance-devops-app:latest .'
-                    
-                    // Tag the Docker image
-                    sh 'docker tag maviance-devops-app:latest mbaapoh/maviance-devops-app:latest'
+                    sh 'ls'
+                   
                     
                     // Optionally, check Docker images
                     sh 'docker images'

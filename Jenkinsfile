@@ -70,9 +70,15 @@ pipeline {
                         # Build the Docker image using the specified Dockerfile
                         docker build -f Dockerfile-java -t maviance-devops-app:latest .
 
-                        # Optionally, check running Docker containers
-                        docker ps
+                        # Optionally, check container images
+                        docker images
                     '''
+
+                    // Log in to Docker Hub
+                    withDockerRegistry([credentialsId: 'dockerhub-credentials', url: 'https://index.docker.io/v1/']) {
+                    // Tag and push the Docker image to Docker Hub
+                    sh 'docker tag maviance-devops-app:latest mbaapoh/maviance-devops-app:latest'
+                    sh 'docker push mbaapoh/maviance-devops-app:latest'
                 }
             }
         }

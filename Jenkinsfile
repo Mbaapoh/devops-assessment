@@ -42,5 +42,22 @@ pipeline {
             }
         }
 
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build Docker image
+                    // sh 'docker build -t my-app:latest .'
+
+                     // Print the current working directory before building the Docker image
+                    sh '''
+                        echo "Print the current working directory before building the Docker image"
+                        pwd
+                    
+                    '''
+                }
+            }
+        }
+
     }
 }

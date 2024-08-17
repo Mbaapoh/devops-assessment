@@ -6,7 +6,7 @@ pipeline {
                 deleteDir() // Deletes the workspace before checking out the code
                 checkout([$class: 'GitSCM',
                         branches: [[name: '*/master']], // Specify the master branch
-                        userRemoteConfigs: [[url: 'https://github.com/maviance/devops-assessment.git']],
+                        userRemoteConfigs: [[url: 'https://github.com/Mbaapoh/devops-assessment.git']],
                         extensions: [[$class: 'CleanBeforeCheckout'], [$class: 'PruneStaleBranch'], [$class: 'CloneOption', noTags: false, shallow: false]]])
             }
         }

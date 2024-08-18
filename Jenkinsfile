@@ -42,7 +42,7 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build and Run Docker Image') {
             steps {
                 script {
                     // Ensure the build directory exists
@@ -71,7 +71,6 @@ pipeline {
                         docker tag maviance-devops-app:1.0.0 mbaapoh/maviance-devops-app:1.0.0
                     '''
                     
-                    
                     // Optionally, check Docker images
                     sh 'docker images'
 
@@ -81,16 +80,31 @@ pipeline {
                             sh 'docker push mbaapoh/maviance-devops-app:1.0.0'
                         }
                     }
+                    
+                    // Run the Docker container to ensure it works correctly
+                    sh 'docker run --rm maviance-devops-app:1.0.0'
                 }
             }
         }
 
-        stage('Run Maven Compile') {
+        stage('Deploy') {
             steps {
-                script {
-                    // Run the Docker container to ensure it works correctly
-                    sh 'docker run --rm maviance-devops-app:1.0.0'
+                // Using SSH credentials stored in Jenkins
+                sshagent(['localhost-deploy']) {
+                    // Test SSH connectivity
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no mbaapoh@10.0.2.15 "echo connected"
+                    '''
                 }
+                
+                // Run Ansible Playbook
+                ansiblePlaybook(
+                    colorized: true, 
+                    installation: 'Ansible', 
+                    playbook: '/var/jenkins_home/ansible/playbooks/deploy.yml', 
+                    inventory: '/var/jenkins_home/ansible/inventory/hosts.ini', 
+                    credentialsId: 'localhost-deploy'
+                )
             }
         }
     }

@@ -1,0 +1,7 @@
+defaults]
+inventory = /var/jenkins_home/ansible/inventory/hosts.ini
+private_key_file = /root/.ssh/id_rsa
+become = yes
+become_method = sudo
+become_user = root
+docker_api_version = auto

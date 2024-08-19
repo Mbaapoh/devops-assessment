@@ -7,18 +7,3 @@
       docker_image:
         name: mbaapoh/maviance-devops-app:1.0.0
         source: pull
-
-    - name: Run Docker container on host machine
-      shell: |
-        docker run -d --name deploy_container mbaapoh/maviance-devops-app:1.0.0
-      delegate_to: host_machine
-
-    - name: Get Docker container info
-      shell: |
-        docker container inspect deploy_container
-      register: container_info
-      delegate_to: host_machine
-
-    - name: Print container logs
-      debug:
-        var: container_info.stdout

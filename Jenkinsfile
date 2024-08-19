@@ -4,26 +4,20 @@ pipeline {
         PUSH_IMAGE = 'true' // Set this to 'true' or 'false' to control image pushing
     }
     stages {
-        stage('Checkout') {
+        stage('Checkout and Build') {
             steps {
+                // Checkout code from the Git repository
                 checkout([$class: 'GitSCM',
                     branches: [[name: '*/master']], // Specify the master branch
                     userRemoteConfigs: [[url: 'https://github.com/Mbaapoh/devops-assessment.git']],
                     extensions: [[$class: 'CleanBeforeCheckout'], [$class: 'PruneStaleBranch'], [$class: 'CloneOption', noTags: false, shallow: false]]])
-            }
-        }
-
-        stage('Build') {
-            agent {
-                docker {
-                    image 'maven:3.9.8-eclipse-temurin-11-alpine'
-                    reuseNode true // Reuse the same Docker container for subsequent stages
-                }
-            }
-            steps {
+                
+                // Build the project using Maven in a Docker container
                 script {
-                    sh 'mkdir -p build'
-                    sh 'mvn compile'
+                    docker.image('maven:3.9.8-eclipse-temurin-11-alpine').inside {
+                        sh 'mkdir -p build'
+                        sh 'mvn compile'
+                    }
                 }
             }
         }
@@ -42,7 +36,7 @@ pipeline {
             }
         }
 
-        stage('Build and Run Docker Image') {
+        stage('Build Docker Image') {
             steps {
                 script {
                     // Ensure the build directory exists

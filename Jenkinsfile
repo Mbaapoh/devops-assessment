@@ -91,7 +91,7 @@ pipeline {
             steps {
                 // Using SSH credentials stored in Jenkins
                 sshagent(['localhost-deploy']) {
-                    // Test SSH connectivity
+                    // Test SSH connectivity to localhost from Jenkins container
                     sh '''
                         ssh -o StrictHostKeyChecking=no mbaapoh@10.0.2.15 "echo connected"
                     '''

@@ -1,6 +1,5 @@
----
 - name: Pull and run Docker image
-  hosts: host_machine
+  hosts: jenkins_container
   become: yes
 
   tasks:
@@ -9,18 +8,17 @@
         name: mbaapoh/maviance-devops-app:1.0.0
         source: pull
 
-    - name: Run Docker container
-      docker_container:
-        name: deploy_container
-        image: mbaapoh/maviance-devops-app:1.0.0
-        detach: yes
-        restart_policy: always
+    - name: Run Docker container on host machine
+      shell: |
+        docker run -d --name deploy_container mbaapoh/maviance-devops-app:1.0.0
+      delegate_to: host_machine
 
     - name: Get Docker container info
-      docker_container_info:
-        name: deploy_container
+      shell: |
+        docker container inspect deploy_container
       register: container_info
+      delegate_to: host_machine
 
     - name: Print container logs
       debug:
-        var: container_info.logs
+        var: container_info.stdout

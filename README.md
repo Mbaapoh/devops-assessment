@@ -50,11 +50,11 @@ mvn exec:java
      ```
 4. Generating and copy the necessrary ssh keys needed for communictioan by ansibe, jenkins and host.  this can be done by runnig the bash script config.sh in config directory.
     - Navigate to the `config` directory.
-    - Grant execute permissions to the `initial-setup.sh` script:
+    - Grant execute permissions to the `config.sh` script:
      ```bash
-     chmod +x initial-setup.sh
+     chmod +x uconfigp.sh
      ```
-    - Run the `configtup.sh` script:
+    - Run the `config.sh` script:
      ```bash
      ./config.sh
      ```
